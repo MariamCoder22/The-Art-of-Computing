@@ -29,3 +29,4 @@ export default async function handler(
     return res.status(500).send("Error revalidating")
   }
 }
+console.log("TOKEN_FOR_REVALIDATE:", process.env.TOKEN_FOR_REVALIDATE);
