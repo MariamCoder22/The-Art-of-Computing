@@ -15,3 +15,4 @@ export const getRecordMap = async (databaseId: string) => {
   
   return recordMap
 }
+console.log("Using API Token:", process.env.NOTION_API_TOKEN);
