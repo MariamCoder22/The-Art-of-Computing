@@ -1,38 +1,33 @@
 import { Client } from "@notionhq/client";
-import { APIResponseError } from "@notionhq/client/build/src/errors";
+import LRU from "lru-cache";
+
+const cache = new LRU<string, any>({
+  max: 100, // Max number of items
+  ttl: 1000 * 60 * 5, // Cache time-to-live (5 minutes)
+});
 
 export const getRecordMap = async (pageIdOrDatabaseId: string) => {
-  const notion = new Client({
-    auth: process.env.NOTION_API_TOKEN
-  });
+  if (!process.env.NOTION_API_TOKEN) {
+    throw new Error("Missing Notion API Token!");
+  }
 
-  console.log("Using ID:", pageIdOrDatabaseId);
-  console.log("API Token exists:", !!process.env.NOTION_API_TOKEN);
+  const cachedResponse = cache.get(pageIdOrDatabaseId);
+  if (cachedResponse) {
+    console.log("Serving from cache:", pageIdOrDatabaseId);
+    return cachedResponse;
+  }
+
+  const notion = new Client({ auth: process.env.NOTION_API_TOKEN });
 
   try {
-    // Check if this is a database or page by trying to retrieve as database first
-    try {
-      await notion.databases.retrieve({ database_id: pageIdOrDatabaseId });
-      // If no error, it's a database
-      const response = await notion.databases.query({
-        database_id: pageIdOrDatabaseId
-      });
-      return response;
-    } catch {
-      // If error, try as a page
-      const response = await notion.pages.retrieve({ 
-        page_id: pageIdOrDatabaseId 
-      });
-      return response;
-    }
-  } catch (error: unknown) {
-    console.error("Error accessing Notion:", error);
+    const response = await notion.pages.retrieve({ page_id: pageIdOrDatabaseId });
     
-    // Properly handle the unknown type
-    if (error instanceof Error) {
-      throw new Error(`Failed to fetch Notion content: ${error.message}`);
-    } else {
-      throw new Error(`Failed to fetch Notion content: ${String(error)}`);
-    }
+    cache.set(pageIdOrDatabaseId, response);
+    console.log("Fetched from API:", pageIdOrDatabaseId);
+
+    return response;
+  } catch (error: any) {
+    console.error("Error accessing Notion:", error);
+    throw new Error(`Failed to fetch Notion content: ${error.message}`);
   }
-}
+};
