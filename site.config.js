@@ -18,7 +18,7 @@ const CONFIG = {
   // blog setting (required)
   blog: {
     title: "The Art of Computing",
-    description: "welcome to The Art of Computing",
+    description: "Welcome to The Art of Computing",
     scheme: "dark", // 'light' | 'dark' | 'system'
   },
 
