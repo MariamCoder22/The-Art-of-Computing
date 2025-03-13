@@ -1,22 +1,23 @@
 import { NotionAPI } from "notion-client";
 
 /**
- * Fetches the Notion page record map using the Notion Client API.
+ * Fetches the record map of a Notion page.
  * @param {string} pageId - The Notion Page ID.
- * @returns {Promise<any>} - The record map of the Notion page.
+ * @returns {Promise<any | null>} - The record map or null if an error occurs.
  */
 export const getRecordMap = async (pageId: string) => {
   try {
-    if (!pageId) throw new Error("Page ID is required");
-    
     const api = new NotionAPI();
     const recordMap = await api.getPage(pageId);
 
-    if (!recordMap) throw new Error("Failed to fetch the record map");
+    if (!recordMap || Object.keys(recordMap).length === 0) {
+      console.warn("Warning: The record map is empty or invalid.");
+      return null;
+    }
 
     return recordMap;
   } catch (error) {
-    console.error("Error fetching Notion record map:", error);
-    return null; // Prevents crashing by returning null in case of failure
+    console.error("Error fetching Notion page record:", error);
+    return null; // Return null to prevent breaking UI logic
   }
 };
