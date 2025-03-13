@@ -1,38 +1,28 @@
-import { Client } from "@notionhq/client";
-import { APIResponseError } from "@notionhq/client/build/src/errors";
+import { Client } from "@notionhq/client"
 
-export const getRecordMap = async (pageIdOrDatabaseId: string) => {
-  const notion = new Client({
+/**
+ * This function now queries a database instead of a single page.
+ * @param {string} databaseId - The Notion Database ID.
+ * @returns {Promise<any>} The record map of the queried database.
+ */
+export const getRecordMap = async (databaseId: string) => {
+  // Add auth parameter to the Client constructor
+  const api = new Client({
     auth: process.env.NOTION_API_TOKEN
-  });
+  })
 
-  console.log("Using ID:", pageIdOrDatabaseId);
-  console.log("API Token exists:", !!process.env.NOTION_API_TOKEN);
+  console.log("Using API Token:", process.env.NOTION_API_TOKEN ? "Token exists" : "Token missing");
+  console.log("Using Database ID:", databaseId);
 
   try {
-    // Check if this is a database or page by trying to retrieve as database first
-    try {
-      await notion.databases.retrieve({ database_id: pageIdOrDatabaseId });
-      // If no error, it's a database
-      const response = await notion.databases.query({
-        database_id: pageIdOrDatabaseId
-      });
-      return response;
-    } catch {
-      // If error, try as a page
-      const response = await notion.pages.retrieve({ 
-        page_id: pageIdOrDatabaseId 
-      });
-      return response;
-    }
-  } catch (error: unknown) {
-    console.error("Error accessing Notion:", error);
+    // Query the database instead of getting a single page.
+    const recordMap = await api.databases.query({
+      database_id: databaseId,
+    })
     
-    // Properly handle the unknown type
-    if (error instanceof Error) {
-      throw new Error(`Failed to fetch Notion content: ${error.message}`);
-    } else {
-      throw new Error(`Failed to fetch Notion content: ${String(error)}`);
-    }
+    return recordMap;
+  } catch (error) {
+    console.error("Error querying Notion database:", error);
+    throw error;
   }
 }
