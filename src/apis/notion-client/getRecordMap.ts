@@ -1,28 +1,24 @@
-import { Client } from "@notionhq/client"
+import { NotionAPI } from "notion-client";
 
 /**
- * This function now queries a database instead of a single page.
- * @param {string} databaseId - The Notion Database ID.
- * @returns {Promise<any>} The record map of the queried database.
+ * Fetches the record map of a Notion page or database.
+ * @param {string} pageId - The Notion Page or Database ID.
+ * @returns {Promise<any>} The record map of the requested Notion page.
  */
-export const getRecordMap = async (databaseId: string) => {
-  // Add auth parameter to the Client constructor
-  const api = new Client({
-    auth: process.env.NOTION_API_TOKEN
-  })
-
-  console.log("Using API Token:", process.env.NOTION_API_TOKEN ? "Token exists" : "Token missing");
-  console.log("Using Database ID:", databaseId);
-
+export const getRecordMap = async (pageId: string) => {
   try {
-    // Query the database instead of getting a single page.
-    const recordMap = await api.databases.query({
-      database_id: databaseId,
-    })
+    const api = new NotionAPI();
     
+    // Fetch the Notion page data
+    const recordMap = await api.getPage(pageId);
+
+    if (!recordMap) {
+      throw new Error(`Failed to fetch record map for page ID: ${pageId}`);
+    }
+
     return recordMap;
   } catch (error) {
-    console.error("Error querying Notion database:", error);
+    console.error("Error fetching Notion record map:", error);
     throw error;
   }
-}
+};
