@@ -3,7 +3,6 @@ import React from "react"
 import {
   AiFillLinkedin,
   AiOutlineGithub,
-  AiOutlineInstagram,
   AiOutlineMail,
 } from "react-icons/ai"
 import { CONFIG } from "site.config"
