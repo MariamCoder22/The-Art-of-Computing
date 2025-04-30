@@ -1,5 +1,3 @@
-// Define the notionConfig object structure directly in JavaScript
-
 const CONFIG = {
   // profile setting (required)
   profile: {
@@ -13,7 +11,7 @@ const CONFIG = {
   },
   projects: [
     {
-      name: "Mariam Khayr",
+      name: `Mariam Khayr`,
       href: "https://github.com/MariamCoder22",
     },
   ],
@@ -24,17 +22,45 @@ const CONFIG = {
     scheme: "dark", // 'light' | 'dark' | 'system'
   },
 
-  // CONFIG configuration (required)
+  // CONFIG configration (required)
   link: "https://morethan-log.vercel.app",
   since: 2025, // If leave this empty, current year will be used.
   lang: "en-US", // ['en-US', 'zh-CN', 'zh-HK', 'zh-TW', 'ja-JP', 'es-ES', 'ko-KR']
   ogImageGenerateURL: "https://og-image-korean.vercel.app", // The link to generate OG image, don't end with a slash
 
+  // notion configuration (required)
   notionConfig: {
-    databaseId: "YOUR_DATABASE_ID",  // Replace with your actual Notion database ID
-    apiKey: "YOUR_API_KEY",  // Replace with your actual Notion API key
+    databaseId: process.env.NOTION_DATABASE_ID,
+    apiKey: process.env.NOTION_API_KEY
   },
 
+  // plugin configuration (optional)
+  googleAnalytics: {
+    enable: false,
+    config: {
+      measurementId: process.env.NEXT_PUBLIC_GOOGLE_MEASUREMENT_ID || "",
+    },
+  },
+  googleSearchConsole: {
+    enable: false,
+    config: {
+      siteVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
+    },
+  },
+  naverSearchAdvisor: {
+    enable: false,
+    config: {
+      siteVerification: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || "",
+    },
+  },
+  utterances: {
+    enable: true,
+    config: {
+      repo: process.env.NEXT_PUBLIC_UTTERANCES_REPO || "",
+      "issue-term": "og:title",
+      label: "💬 Utterances",
+    },
+  },
   cusdis: {
     enable: false,
     config: {
@@ -42,11 +68,8 @@ const CONFIG = {
       appid: "", // Embed Code -> data-app-id value
     },
   },
-
   isProd: process.env.VERCEL_ENV === "production", // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)
   revalidateTime: 21600 * 7, // revalidate time for [slug], index
-};
+}
 
-// Export CONFIG so it can be accessed elsewhere in the app
-module.exports = { CONFIG };
-
+module.exports = { CONFIG }

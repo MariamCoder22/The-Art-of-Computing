@@ -11,6 +11,7 @@ export interface Profile {
   }
   
   export interface SiteConfig {
+    googleAnalytics: any
     notionConfig: any
     profile: Profile
     // You can extend this with other config sections if needed:
