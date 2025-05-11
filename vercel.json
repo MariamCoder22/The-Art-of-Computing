@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NOTION_DATABASE_ID": "74c7b574535343b9afa5d8b8b7b571d3",
+    "NOTION_API_SECRET": "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"
+  }
+}
